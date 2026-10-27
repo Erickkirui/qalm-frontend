@@ -24,7 +24,7 @@ export default function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/register-therapist" element={<RegisterTherapist />} />
-        <Route path="/landing" element= {<Landing /> } />
+        <Route path="/" element= {<Landing /> } />
         {/* Protected Member Routes wrapped in Layout */}
         <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
