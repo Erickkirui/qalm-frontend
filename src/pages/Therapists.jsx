@@ -1,13 +1,50 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api/index.js";
 
-const FOCUS = ["anxiety", "stress", "depression", "sleep", "relationships", "students"];
+const FOCUS = [
+  { id: "", label: "All", icon: "grid" },
+  { id: "anxiety", label: "Anxiety", icon: "heart" },
+  { id: "stress", label: "Stress", icon: "wave" },
+  { id: "depression", label: "Low mood", icon: "cloud" },
+  { id: "sleep", label: "Sleep", icon: "moon" },
+  { id: "relationships", label: "Relationships", icon: "users" },
+  { id: "students", label: "Student life", icon: "book" },
+];
+
+/* Neutral line icons — one family, 1.6 stroke, rounded. */
+const ICONS = {
+  grid: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",
+  heart: "M12 20s-7-4.4-7-9.5A3.9 3.9 0 0 1 12 7a3.9 3.9 0 0 1 7 3.5C19 15.6 12 20 12 20z",
+  wave: "M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0",
+  cloud: "M7 18h9a4 4 0 0 0 .6-8A5.5 5.5 0 0 0 6.4 11 3.5 3.5 0 0 0 7 18z",
+  moon: "M20 14.5A8 8 0 0 1 9.5 4 8.2 8.2 0 1 0 20 14.5z",
+  users: "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M16 5.5a3.2 3.2 0 0 1 0 6M18 20c0-2.4-.9-4-2.5-4.7",
+  book: "M4 5.5A2.5 2.5 0 0 1 6.5 3H19v16H6.5A2.5 2.5 0 0 0 4 21.5zM8 8h7",
+  search: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4",
+  sliders: "M4 7h10M18 7h2M4 17h4M12 17h8M16 4v6M8 14v6",
+  star: "M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9z",
+  heartFill: "M12 20.5l-1.3-1.2C5.4 14.6 2.5 11.9 2.5 8.6 2.5 6 4.6 4 7.2 4c1.6 0 3 .7 3.9 1.9L12 7l.9-1.1C13.8 4.7 15.2 4 16.8 4c2.6 0 4.7 2 4.7 4.6 0 3.3-2.9 6-8.2 10.7z",
+};
+
+/* Portrait gradients — neutral, no stock photography needed. */
+const TINTS = [
+  "linear-gradient(150deg,#ff7a59,#ff385c)",
+  "linear-gradient(150deg,#4f8cff,#123ead)",
+  "linear-gradient(150deg,#34c7a1,#0f7a55)",
+  "linear-gradient(150deg,#ffb400,#f08a00)",
+  "linear-gradient(150deg,#9b6bff,#6c3ce0)",
+  "linear-gradient(150deg,#ff6b9d,#d64b8c)",
+];
+
+const initials = (name) =>
+  name.split(" ").map((s) => s[0]).join("").replace(/\./g, "").slice(0, 2).toUpperCase();
 
 export default function Therapists() {
   const [filters, setFilters] = useState({ search: "", specialization: "", session_type: "" });
   const [data, setData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(null);
+  const [favs, setFavs] = useState({});
 
   useEffect(() => {
     let alive = true;
@@ -28,89 +65,171 @@ export default function Therapists() {
 
   const set = (k) => (e) => setFilters({ ...filters, [k]: e.target.value });
 
+  const pickCategory = (id) => setFilters({ ...filters, specialization: id });
+
   return (
     <>
-      <div className="page-head rise">
-        <h1>Find a therapist</h1>
-        <p className="lead mb-0">
-          Verified professionals who work with young people. Filter by what matters,
-          then book a time that fits.
-        </p>
-      </div>
-
-      <section className="card rise rise-2" style={{ marginBottom: "var(--s-5)" }}>
-        <div className="field" style={{ marginBottom: "var(--s-3)" }}>
-          <label className="label" htmlFor="search">Search by name or focus area</label>
-          <input className="input" id="search" type="search" value={filters.search}
-            onChange={set("search")} placeholder="Try “anxiety”, “students”, “sleep”…" />
+      {/* Segmented search pill, Airbnb-style */}
+      <div className="ab-search rise" style={{ margin: "4px 0 var(--s-4)", maxWidth: "100%" }}>
+        <div className="ab-seg">
+          <label htmlFor="search">Focus area</label>
+          <input
+            id="search"
+            type="search"
+            value={filters.search}
+            onChange={set("search")}
+            placeholder="Try anxiety, sleep, students…"
+          />
         </div>
-        <div className="tag-row" role="group" aria-label="Focus area">
-          <button className="chip" type="button" aria-pressed={!filters.specialization}
-            onClick={() => setFilters({ ...filters, specialization: "" })}>All</button>
-          {FOCUS.map((f) => (
-            <button key={f} className="chip" type="button"
-              aria-pressed={filters.specialization === f}
-              onClick={() => setFilters({ ...filters, specialization: filters.specialization === f ? "" : f })}>
-              {f === "depression" ? "Low mood" : f}
-            </button>
-          ))}
-        </div>
-        <div className="row-between" style={{ marginTop: "var(--s-3)" }}>
-          <p className="small muted mb-0"><strong>{data.total}</strong> therapists match</p>
-          <select className="select" style={{ minHeight: 40, width: "auto", fontSize: "var(--small)" }}
-            value={filters.session_type} onChange={set("session_type")}>
-            <option value="">Any session type</option>
+        <div className="ab-seg">
+          <label htmlFor="stype">Session type</label>
+          <select
+            id="stype"
+            value={filters.session_type}
+            onChange={set("session_type")}
+            style={{
+              width: "100%", border: 0, background: "transparent", font: "inherit",
+              fontSize: 14, color: "var(--slate-soft)", outline: "none", padding: 0, cursor: "pointer",
+            }}
+          >
+            <option value="">Anywhere</option>
             <option value="online">Online</option>
             <option value="in_person">In person</option>
           </select>
         </div>
-      </section>
+        <div className="ab-seg">
+          <label htmlFor="fee">Budget</label>
+          <input id="fee" type="text" placeholder="Any price" readOnly />
+        </div>
+        <button className="ab-search-btn" type="button" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2.4" strokeLinecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </button>
+      </div>
 
-      {loading && <p className="muted">Loading therapists…</p>}
+      {/* Scrolling category row */}
+      <div className="ab-cats" role="group" aria-label="Focus areas">
+        {FOCUS.map((c) => (
+          <button
+            key={c.id || "all"}
+            className="ab-cat"
+            type="button"
+            aria-pressed={filters.specialization === c.id}
+            onClick={() => pickCategory(c.id)}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d={ICONS[c.icon]} />
+            </svg>
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Result bar */}
+      <div className="ab-filterbar">
+        <p className="ab-count mb-0">
+          {loading ? "Searching…" : `${data.total} therapist${data.total === 1 ? "" : "s"} available`}
+        </p>
+        <div className="ab-toggles">
+          {["online", "in_person"].map((s) => (
+            <button
+              key={s}
+              className="ab-toggle"
+              type="button"
+              aria-pressed={filters.session_type === s}
+              onClick={() =>
+                setFilters({ ...filters, session_type: filters.session_type === s ? "" : s })
+              }
+            >
+              {s === "online" ? "Online" : "In person"}
+            </button>
+          ))}
+          <button className="ab-filters-btn" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2" strokeLinecap="round">
+              <path d="M4 7h10M18 7h2M4 17h4M12 17h8M16 4v6M8 14v6" />
+            </svg>
+            Filters
+          </button>
+        </div>
+      </div>
 
       {!loading && data.items.length === 0 && (
         <div className="empty card">
-          <span className="icon-tile" aria-hidden="true">🔍</span>
+          <span className="icon-tile" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="1.6" strokeLinecap="round">
+              <path d={ICONS.search} />
+            </svg>
+          </span>
           <h2>No matches yet</h2>
           <p>Try a different filter — new therapists join every week.</p>
+          <button className="btn btn-secondary" type="button" onClick={() => setFilters({ search: "", specialization: "", session_type: "" })}>
+            Clear all
+          </button>
         </div>
       )}
 
-      <div className="grid grid-3 rise rise-3">
-        {(data.items || []).map((t) => (
-          <article className="card card-hover" key={t.id}>
-            <div className="row-between">
-              <span className="avatar avatar-lg" aria-hidden="true">
-                {t.name.split(" ").map((s) => s[0]).join("").slice(0, 2)}
-              </span>
-              <span className="badge badge-success">Verified</span>
+      {/* Airbnb photo grid */}
+      <div className="ab-grid">
+        {(data.items || []).map((t, i) => (
+          <article className="ab-card" key={t.id}>
+            <div
+              className="ab-media"
+              style={{ background: TINTS[i % TINTS.length] }}
+              role="img"
+              aria-label={`${t.name} portrait`}
+            >
+              <span className="ab-badge">Verified</span>
+              <button
+                type="button"
+                className="ab-stretch"
+                aria-label={`View ${t.name} and book a session`}
+                onClick={() => setBooking(t)}
+              />
+              <button
+                className="ab-heart"
+                type="button"
+                aria-label={favs[t.id] ? "Remove from favourites" : "Add to favourites"}
+                aria-pressed={Boolean(favs[t.id])}
+                onClick={() => setFavs((f) => ({ ...f, [t.id]: !f[t.id] }))}
+              >
+                <svg viewBox="0 0 24 24" fill={favs[t.id] ? "currentColor" : "rgba(255,255,255,.92)"}
+                  stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                  <path d={favs[t.id] ? ICONS.heartFill : ICONS.heart} />
+                </svg>
+              </button>
+              <span className="initials" aria-hidden="true">{initials(t.name)}</span>
+              <span className="ab-dots" aria-hidden="true"><i /><i /><i /><i /></span>
             </div>
-            <h2 className="card-title" style={{ marginTop: "var(--s-3)" }}>{t.name}</h2>
-            <p className="small muted" style={{ marginTop: "-0.35rem" }}>
-              {t.professional_title} · {t.experience_years} yrs
-            </p>
-            <div className="tag-row" style={{ margin: "var(--s-3) 0" }}>
-              {(t.specializations || []).slice(0, 3).map((s) => (
-                <span className="badge" key={s}>{s}</span>
-              ))}
+
+            <div className="ab-body">
+              <div className="ab-title-row">
+                <h3 className="ab-title">{t.name}</h3>
+                <span className="ab-rating">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d={ICONS.star} /></svg>
+                  {t.rating ? t.rating.toFixed(2) : "New"}
+                  {t.reviews ? <span className="muted" style={{ fontWeight: 400 }}>&nbsp;({t.reviews})</span> : null}
+                </span>
+              </div>
+              <p className="ab-sub">{t.professional_title} · {t.experience_years} yrs</p>
+              <p className="ab-sub" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {(t.specializations || []).slice(0, 3).join(", ") || "General practice"}
+              </p>
+              <p className="ab-price">
+                <b>{t.currency === "GBP" ? "£" : ""}{t.consultation_fee}</b> per session
+                {t.accepting_clients ? "" : " · not accepting new clients"}
+              </p>
             </div>
-            <p className="small muted">{t.bio}</p>
-            <div className="row-between" style={{ marginTop: "var(--s-4)" }}>
-              <span className="small"><strong>{t.consultation_fee}</strong>{" "}
-                <span className="muted"> {t.currency} / session</span></span>
-              <span className="small" style={{ color: "var(--slate-soft)", fontWeight: 600 }}>
-                {(t.languages || []).join(", ")}
-              </span>
-            </div>
-            <button className="btn btn-primary btn-block" type="button"
-              style={{ marginTop: "var(--s-3)" }}
-              disabled={!t.accepting_clients}
-              onClick={() => setBooking(t)}>
-              {t.accepting_clients ? "Book session" : "Not accepting clients"}
-            </button>
           </article>
         ))}
       </div>
+
+      {loading && <p className="muted" style={{ padding: "var(--s-5) 0" }}>Loading therapists…</p>}
 
       {booking && <BookingModal therapist={booking} onClose={() => setBooking(null)} />}
     </>
@@ -153,7 +272,7 @@ function BookingModal({ therapist, onClose }) {
           <div>
             <h2 className="card-title">Book with {therapist.name}</h2>
             <p className="small muted mb-0">
-              {therapist.consultation_fee} {therapist.currency} ·{" "}
+              {therapist.currency === "GBP" ? "£" : ""}{therapist.consultation_fee} ·{" "}
               {therapist.session_duration || 50} min
             </p>
           </div>

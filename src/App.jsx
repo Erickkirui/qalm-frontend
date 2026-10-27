@@ -1,7 +1,5 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "./context/AuthContext.jsx";
-import { MODE } from "./api/index.js";
-
+import { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 import Landing from "./pages/Landing.jsx";
 import Auth from "./pages/Auth.jsx";
@@ -13,51 +11,37 @@ import Preferences from "./pages/Preferences.jsx";
 import TherapistApply from "./pages/TherapistApply.jsx";
 import TherapistPortal from "./pages/TherapistPortal.jsx";
 import Admin from "./pages/Admin.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
-function RequireAuth({ children, roles }) {
-  const { user, booting } = useAuth();
-  const location = useLocation();
-  if (booting) return <p className="muted" style={{ padding: "3rem" }}>Loading…</p>;
-  if (!user) return <Navigate to="/auth" state={{ from: location }} replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" replace />;
-  return children;
+function LayoutContent() {
+  useEffect(() => {
+    // Register service worker for PWA install prompts (optional)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {
+        /* SW disabled in dev */
+      });
+    }
+  }, []);
+
+  return <Layout />;
 }
 
 export default function App() {
   return (
-    <>
-      {MODE === "demo" && (
-        <div className="demo-banner">
-          Demo mode — no API configured. Data is in-memory. Log in as
-          user@qalm.test, therapist@qalm.test or admin@qalm.test (password123).
-          Set <code>VITE_API_URL</code> to connect the Flask backend.
-        </div>
-      )}
-      <Routes>
+    <Routes>
+      <Route element={<LayoutContent />}>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
-
-        <Route element={<RequireAuth><Layout /></RequireAuth>}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/therapists" element={<Therapists />} />
-          <Route path="/journal" element={<Journal />} />
-          <Route path="/appointments" element={<Appointments />} />
-          <Route path="/preferences" element={<Preferences />} />
-          <Route path="/therapist/apply" element={<TherapistApply />} />
-          <Route
-            path="/therapist"
-            element={
-              <RequireAuth roles={["normal"]}><TherapistPortal /></RequireAuth>
-            }
-          />
-          <Route
-            path="/admin"
-            element={<RequireAuth roles={["admin"]}><Admin /></RequireAuth>}
-          />
-        </Route>
-
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/therapists" element={<Therapists />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/appointments" element={<Appointments />} />
+        <Route path="/preferences" element={<Preferences />} />
+        <Route path="/therapist/apply" element={<TherapistApply />} />
+        <Route path="/therapist" element={<TherapistPortal />} />
+        <Route path="/admin" element={<Admin />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }

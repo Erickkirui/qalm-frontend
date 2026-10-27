@@ -45,7 +45,7 @@ export default function Layout() {
       <aside className="sidebar">
         <Link className="brand" to="/">
           <span className="brand-mark" aria-hidden="true">Q</span>
-          Qalm<span className="brand-gold">Tek</span>
+          qalm
         </Link>
 
         <nav className="side-nav" aria-label="App">
@@ -110,19 +110,44 @@ export default function Layout() {
         <header className="topbar">
           <div className="container" style={{ maxWidth: "none", paddingInline: "var(--s-4)" }}>
             <div className="topbar-inner" style={{ minHeight: 64 }}>
-              <Link className="brand" to="/" style={{ fontSize: "1rem" }}>
+              <Link className="brand" to="/" style={{ fontSize: "1.125rem" }}>
                 <span className="brand-mark" aria-hidden="true">Q</span>
-                Qalm<span className="brand-gold">Tek</span>
+                qalm
               </Link>
-              <div className="row" style={{ gap: "var(--s-2)" }}>
-                {!user?.has_therapist_profile && !isAdmin && (
-                  <Link className="btn btn-secondary btn-sm" to="/therapist/apply">
-                    Become a therapist
-                  </Link>
-                )}
-                <span className="avatar" style={{ width: 40, height: 40 }} aria-hidden="true">
-                  {user?.name?.slice(0, 2).toUpperCase() || "?"}
-                </span>
+
+              {/* Airbnb-style segmented search */}
+              <div className="ab-search" role="search">
+                <div className="ab-seg">
+                  <label htmlFor="q-what">Focus area</label>
+                  <input id="q-what" placeholder="Anxiety, sleep, study stress…" />
+                </div>
+                <div className="ab-seg">
+                  <label htmlFor="q-when">When</label>
+                  <input id="q-when" placeholder="Add dates" />
+                </div>
+                <div className="ab-seg">
+                  <label htmlFor="q-who">Session</label>
+                  <input id="q-who" placeholder="Online or in person" />
+                </div>
+                <button className="ab-search-btn" type="button" aria-label="Search">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    strokeWidth="2.4" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="ab-actions">
+                <Link className="ab-link" to="/">
+                  {isAdmin ? "Admin workspace" : "Become a therapist"}
+                </Link>
+                <button className="ab-avatar-btn" type="button" aria-label="Account menu">
+                  <span className="ab-menu-icon" aria-hidden="true"><i /><i /><i /></span>
+                  <span className="avatar" style={{ width: 30, height: 30, fontSize: 11 }} aria-hidden="true">
+                    {user?.name?.slice(0, 2).toUpperCase() || "?"}
+                  </span>
+                </button>
               </div>
             </div>
           </div>

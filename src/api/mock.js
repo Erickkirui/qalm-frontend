@@ -31,6 +31,7 @@ const db = {
       license_country: "Kenya", session_types: ["online", "in_person"], session_duration: 50,
       consultation_fee: 35, currency: "GBP", location: "Nairobi",
       accepting_clients: true, is_listed: true, verification_status: "approved",
+      rating: 4.97, reviews: 184,
       created_at: "2025-12-03T09:00:00Z",
     },
     {
@@ -43,6 +44,7 @@ const db = {
       license_country: "Ghana", session_types: ["online"], session_duration: 50,
       consultation_fee: 30, currency: "GBP", location: "Accra",
       accepting_clients: true, is_listed: true, verification_status: "approved",
+      rating: 4.92, reviews: 126,
       created_at: "2026-01-14T09:00:00Z",
     },
     {
@@ -55,7 +57,22 @@ const db = {
       license_country: "Nigeria", session_types: ["online", "in_person"], session_duration: 45,
       consultation_fee: 28, currency: "GBP", location: "Lagos",
       accepting_clients: true, is_listed: true, verification_status: "approved",
+      rating: 4.89, reviews: 73,
       created_at: "2026-02-02T09:00:00Z",
+    },
+    {
+      id: 14, user_id: 7, name: "Josephine Ncube", profile_type: "individual",
+      professional_title: "Clinical psychologist", profile_image_url: "",
+      bio: "Experienced, structured care for when things have felt heavy for a while.",
+      specializations: ["depression", "anxiety", "relationships"],
+      languages: ["English", "Shona"],
+      qualifications: "PhD Clinical Psychology", institution: "University of Zimbabwe",
+      experience_years: 12, license_number: "HP-5540", licensing_body: "Health Professions Council",
+      license_country: "Zimbabwe", session_types: ["online"], session_duration: 50,
+      consultation_fee: 45, currency: "GBP", location: "Harare",
+      accepting_clients: true, is_listed: true, verification_status: "approved",
+      rating: 4.95, reviews: 211,
+      created_at: "2026-01-28T09:00:00Z",
     },
     {
       id: 13, user_id: 6, name: "Dr. Lila Osei", profile_type: "individual",
