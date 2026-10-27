@@ -53,7 +53,8 @@ const EVENT_COLORS = [
 ];
 
 export default function Appointments() {
-  const [view, setView] = useState("calendar"); 
+  // 1. DEFAULT TO LIST VIEW
+  const [view, setView] = useState("list"); 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -207,7 +208,6 @@ export default function Appointments() {
 
                 return (
                   <div key={colIndex} className="border-r border-gray-100 last:border-0 relative h-full group">
-                    {/* Hover highlight for the whole column */}
                     <div className="absolute inset-0 bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                     {dayEvents.map((event, i) => {
@@ -254,7 +254,6 @@ export default function Appointments() {
 
     return (
       <div key={a.id} className="relative overflow-hidden rounded-lg border border-gray-100 shadow-sm p-5 md:p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1 bg-white group">
-        {/* Shapes get slightly bigger on hover */}
         <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-20 bg-[#e6e1f5] mix-blend-multiply pointer-events-none transition-transform duration-500 group-hover:scale-110" />
         <div className="absolute bottom-6 right-12 w-10 h-10 rotate-45 rounded-lg opacity-30 bg-[#d9d3ee] mix-blend-multiply pointer-events-none transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[60deg]" />
 
@@ -316,7 +315,6 @@ export default function Appointments() {
 
   return (
     <>
-      {/* Add the fade-in keyframes to the component scope */}
       <style>
         {`
           @keyframes fadeIn {
@@ -335,7 +333,7 @@ export default function Appointments() {
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mt-1">Appointments</h1>
         </div>
         
-        {/* Toggle Switch with smooth background slide */}
+        {/* UPDATED TOGGLE: Matches Therapists Page Style */}
         <div className="flex bg-gray-100 p-1 rounded-lg border border-gray-200 shadow-inner relative">
           <button 
             onClick={() => setView("list")} 
