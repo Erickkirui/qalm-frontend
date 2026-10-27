@@ -17,7 +17,7 @@ export default function Landing() {
             <span className="text-xl font-extrabold tracking-tight">Qalm Tek</span>
           </div>
           <div className="flex gap-3">
-            <Link to="/auth" className="text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-full transition-all active:scale-95">
+            <Link to="/login" className="text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-full transition-all active:scale-95">
               Log in
             </Link>
             <Link to="/auth" className="text-sm font-bold text-white bg-[#5B3DF5] hover:bg-[#4a2ee0] px-6 py-2.5 rounded-full transition-all shadow-sm active:scale-95">
