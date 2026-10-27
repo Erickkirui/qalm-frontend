@@ -1,3 +1,458 @@
+/* ==========================================================================
+   QALM TEK — Tailwind CSS v4 theme + design token library
+   src/index.css · one file: @import "tailwindcss" + @theme static
+
+   HOW TO CHANGE THE LOOK
+   1. Edit the hex values in "1. Core colours". Tints/darker shades below are
+      calculated from them, so one change updates everything.
+   2. Every token becomes Tailwind classes automatically:
+      --color-brand  ->  bg-brand  text-brand  border-brand  ring-brand/20
+   ========================================================================== */
+
 @import "tailwindcss";
 
+@theme static {
+  /* ---------- 1. Core colours ---------- */
+  --color-royal:   #123ead;   /* primary buttons, links, key icons */
+  --color-bright:  #0879f9;   /* interactive states, progress, links */
+  --color-gold:    #f4b51e;   /* warm accent, featured actions */
+  --color-pale-blue:#eaf0ff;  /* active nav, info panels */
+  --color-pale-gold:#fff5d9;  /* warm prompts, highlighted cards */
+  --color-cloud:   #f7f9fc;  /* page background */
+  --color-white:   #ffffff;  /* cards, forms, menus */
+  --color-slate:   #202b3c;  /* main headings and body text */
+  --color-slate-soft:#64748b; /* supporting text, hints, captions */
 
+  /* ---------- 2. Qalm Tek brand system (from the form kit) ---------- */
+  --color-ink:       #16132b;   /* main text, dark surfaces */
+  --color-ink-soft:  #4b4766;   /* secondary text */
+  --color-ink-muted: #6b6785;   /* placeholders, hints */
+
+  --color-brand:     #5b3df5;   /* primary actions, links, focus rings */
+  --color-brand-hover:#4a2ed8;  /* hovered primary */
+  --color-brand-dark:#2e1b97;   /* pressed primary */
+  --color-brand-tint:#e4ddff;   /* soft primary surface */
+  --color-brand-faint:#f1ecff;  /* subtle primary background */
+
+  --color-pink:      #ff5fa2;   /* feel-good moments, check-in */
+  --color-pink-tint: #ffd9e8;   /* soft pink surface */
+
+  --color-sun:       #ffa23a;   /* warm accent, pending states */
+  --color-sun-tint:  #ffe2bf;   /* soft sun surface */
+  --color-sun-dark:  #7a4100;   /* darker sun text */
+
+  --color-mint:      #3ddba7;   /* calm accent, success */
+  --color-mint-tint: #dbf3e8;   /* soft mint surface */
+
+  --color-success:     #17603f;  /* success states */
+  --color-success-tint:#ddf3e8;  /* soft success surface */
+  --color-danger:      #c4204f;  /* danger, cancelling */
+  --color-danger-dark:#8e1239;  /* darker danger */
+  --color-danger-tint: #ffe3ea;  /* soft danger surface */
+
+  /* ---------- 3. Surfaces & borders ---------- */
+  --color-surface:     #f5f3fb;  /* page background */
+  --color-line:        #e6e1f5;  /* card borders, dividers */
+  --color-line-strong: #d9d3ee;  /* input borders */
+
+  /* ---------- 4. Fonts ---------- */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------- 5. Extra sizes (from the form kit) ---------- */
+  --spacing-6\.5: 1.625rem;
+  --spacing-9\.5: 2.375rem;
+  --spacing-11\.5: 2.875rem;
+}
+
+/* ==========================================================================
+   The Qalm Tek design system — plain CSS using @apply + the tokens above.
+   All colours come from the @theme block, so they stay one source of truth.
+   ========================================================================== */
+
+@layer base {
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-ink);
+    background: var(--color-surface);
+  }
+
+  /* ---------- skip link ---------- */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--s-4);
+    z-index: 60;
+    display: inline-block;
+    padding: var(--s-2) var(--s-4);
+    background: var(--color-brand);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 0 0 8px 0;
+    transition: top 0.15s ease-out;
+  }
+
+  .skip-link:focus {
+    top: var(--s-4);
+  }
+
+  /* ---------- focus ---------- */
+  .focus-ring:focus-visible {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-tint), 0 0 0 5px var(--color-brand) / 40%;
+  }
+
+  /* focused state for form controls (border + ring applied via CSS) */
+  .field-input:focus,
+  .select:focus,
+  .textarea:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-tint), 0 0 0 5px var(--color-brand) / 40%;
+  }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------- utilities built on the design tokens ---------- */
+
+.btn {
+  @apply inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-transparent px-6 text-base font-bold transition;
+}
+
+.btn-primary {
+  @apply bg-brand text-white hover:bg-brand-hover;
+}
+.btn-primary:disabled {
+  @apply cursor-not-allowed bg-line text-ink-muted;
+}
+.btn-primary.small {
+  @apply h-10 px-4 text-sm;
+}
+.btn-primary.large {
+  @apply h-14 px-8;
+}
+.btn-primary.block {
+  @apply w-full;
+}
+
+.btn-accent {
+  @apply bg-bright text-white hover:bg-bright/90;
+}
+.btn-accent:disabled {
+  @apply cursor-not-allowed bg-line text-ink-muted;
+}
+.btn-accent.small {
+  @apply h-10 px-4 text-sm;
+}
+.btn-accent.large {
+  @apply h-14 px-8;
+}
+
+.btn-gold {
+  @apply bg-gold text-white hover:bg-gold/90;
+}
+.btn-gold:disabled {
+  @apply cursor-not-allowed bg-line text-ink-muted;
+}
+.btn-gold.small {
+  @apply h-10 px-4 text-sm;
+}
+.btn-gold.large {
+  @apply h-14 px-8;
+}
+
+.btn-secondary {
+  @apply border-brand bg-transparent text-brand hover:bg-brand-tint hover:text-brand-dark;
+}
+.btn-secondary:disabled {
+  @apply cursor-not-allowed bg-line text-ink-muted;
+}
+
+.btn-ghost {
+  @apply border border-line-strong text-ink-soft hover:bg-brand-tint hover:text-brand hover:underline;
+}
+.btn-ghost:disabled {
+  @apply cursor-not-allowed text-ink-muted;
+}
+
+.link-btn {
+  @apply text-brand font-bold hover:underline;
+}
+
+/* ---------- cards ---------- */
+.card {
+  @apply rounded-2xl border border-line bg-white p-5 shadow-sm;
+}
+.card-hover:hover {
+  @apply shadow-md;
+}
+.card-title {
+  @apply font-bold text-slate mb-1;
+}
+.card-head {
+  @apply flex items-start justify-between gap-3 mb-4;
+}
+.card-tint {
+  @apply bg-brand-tint;
+}
+.card-warm {
+  @apply bg-pale-gold;
+}
+
+/* ---------- form system (from the form kit) ---------- */
+.form-grid {
+  @apply flex flex-col gap-5;
+}
+.field {
+  @apply flex flex-col gap-2;
+}
+.field.base {
+  @apply flex flex-col gap-2;
+}
+.label {
+  @apply text-sm font-semibold text-slate;
+}
+.input,
+.select,
+.textarea {
+  @apply h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base text-ink placeholder:text-ink-muted;
+}
+.textarea {
+  @apply resize-y py-3 leading-relaxed min-h-28;
+}
+/* inline actions & prefixes (form-kit) */
+.field-inline {
+  @apply relative flex flex-col gap-2;
+}
+.input-inline-prefix {
+  @apply pl-14;
+}
+.input-inline-action {
+  @apply absolute right-3 top-1/2 -translate-y-1/2 h-10 rounded-lg px-3 text-sm font-bold text-ink-soft transition hover:text-ink;
+}
+.select-wrapper {
+  @apply relative;
+}
+.select-wrapper::after {
+  @apply pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 size-5 content-[""];
+  /* chevron added by the forms plugin; no SVG needed here */
+}
+.checkbox,
+.radio {
+  @apply size-5 rounded-md border border-line-strong text-brand;
+}
+.switch {
+  @apply relative h-6.5 w-11.5 rounded-full bg-line-strong transition;
+}
+.switch[aria-checked="true"] {
+  @apply bg-brand;
+}
+.switch .knob {
+  @apply absolute left-0.5 top-0.5 size-5 rounded-full bg-white transition group-aria-checked:translate-x-5;
+}
+.segmented {
+  @apply inline-flex gap-0.5 rounded-xl bg-surface p-1;
+}
+.segmented-item {
+  @apply h-9.5 rounded-lg px-4 text-sm font-bold text-ink-soft transition;
+}
+.segmented-item[aria-pressed="true"] {
+  @apply bg-white text-ink shadow-sm;
+}
+.chip {
+  @apply h-9 rounded-full border border-line-strong bg-white px-3.5 text-sm font-semibold text-ink transition;
+}
+.chip[aria-pressed="true"] {
+  @apply border-brand bg-brand text-white;
+}
+.choice-card {
+  @apply flex items-center gap-3.5 rounded-2xl border-2 border-line-strong bg-white p-4 transition has-[:checked]:border-brand has-[:checked]:bg-brand-faint;
+}
+
+/* ---------- badges & alerts ---------- */
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold text-slate-soft;
+}
+.badge-gold {
+  @apply bg-gold/15 text-gold;
+}
+.badge-success {
+  @apply bg-success-tint text-success;
+}
+.badge-danger {
+  @apply bg-danger-tint text-danger-dark;
+}
+.badge-neutral {
+  @apply bg-line text-ink-soft;
+}
+.alert {
+  @apply flex items-start gap-3 rounded-2xl p-4 text-sm;
+}
+.alert-info {
+  @apply bg-brand-tint text-brand-dark;
+}
+.alert-success {
+  @apply bg-success-tint text-success;
+}
+.alert-warning {
+  @apply bg-sun-tint text-sun-dark;
+}
+.alert-error {
+  @apply bg-danger-tint text-danger-dark;
+}
+
+/* ---------- status pills (session types) ---------- */
+.status {
+  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold;
+}
+.status-confirmed {
+  @apply bg-success/15 text-success;
+}
+.status-pending {
+  @apply bg-sun-tint text-sun-dark;
+}
+.status-cancelled {
+  @apply bg-danger-tint text-danger-dark;
+}
+.status-completed {
+  @apply bg-mint-tint text-mint;
+}
+.status-rescheduled {
+  @apply bg-brand-tint text-brand-dark;
+}
+.status-unpaid {
+  @apply bg-[#fff5d9] text-[#7a4100];
+}
+
+/* ---------- page head & content layout ---------- */
+.page-head {
+  @apply flex flex-wrap items-end justify-between gap-4 mb-5;
+}
+.lead {
+  @apply text-ink-soft mb-0;
+}
+
+/* ---------- progress / mood / stat tiles ---------- */
+.progress {
+  @apply h-2 rounded-full bg-line overflow-hidden;
+}
+.progress-fill {
+  @apply h-full rounded-full bg-brand;
+}
+
+/* ---------- auth / form pages ---------- */
+.auth-form {
+  @apply flex flex-col gap-5;
+}
+.auth-card {
+  @apply w-full max-w-md rounded-2xl border border-line bg-white p-6 shadow-sm;
+}
+
+/* ---------- tabs ---------- */
+.tabs {
+  @apply inline-flex gap-1 rounded-xl bg-line p-1;
+}
+.tab {
+  @apply h-9 rounded-lg px-3 text-sm font-bold text-ink-soft transition;
+}
+.tab[aria-selected="true"] {
+  @apply bg-white text-ink shadow-sm;
+}
+
+/* ---------- modal ---------- */
+.modal-backdrop {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4;
+  animation: fade 0.18s ease-out;
+}
+.modal {
+  @apply w-full max-w-lg rounded-2xl border border-line bg-white p-6 shadow-xl;
+  animation: rise 0.2s ease-out;
+}
+.modal-actions {
+  @apply flex flex-wrap gap-3 justify-end mt-6;
+}
+
+/* ---------- skeleton loading ---------- */
+.skeleton {
+  @apply animate-pulse rounded-xl bg-line;
+}
+
+/* ---------- empty state ---------- */
+.empty {
+  @apply flex flex-col items-center justify-center rounded-2xl border border-line bg-surface p-8 text-center;
+}
+
+/* ---------- mood scale (check-in) ---------- */
+.mood-scale {
+  @apply flex flex-wrap gap-2;
+}
+.mood {
+  @apply flex h-12 w-12 items-center justify-center rounded-full text-2xl transition hover:scale-110;
+}
+.mood[aria-pressed="true"] {
+  @apply bg-gold text-white shadow-sm;
+}
+
+/* ---------- step indicators ---------- */
+.steps {
+  @apply flex flex-wrap gap-2;
+}
+.step {
+  @apply flex flex-wrap items-center gap-2 rounded-full border border-line p-3;
+}
+.step.is-active {
+  @apply border-brand bg-brand-tint;
+}
+.step .step-num {
+  @apply flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold;
+}
+.step.is-active .step-num {
+  @apply bg-brand text-white;
+}
+
+/* ---------- choice card (filter chip style) ---------- */
+.choice-card {
+  @apply flex items-center gap-3.5 rounded-2xl border-2 border-line-strong bg-white p-4 transition;
+}
+.choice-card:has(input:checked) {
+  @apply border-brand bg-brand-faint;
+}
+
+/* ---------- utility containers ---------- */
+.container {
+  @apply mx-auto max-w-7xl px-4;
+}
+.row {
+  @apply flex flex-wrap gap-3;
+}
+.row-between {
+  @apply flex flex-wrap items-end justify-between gap-3;
+}
+.stack {
+  @apply flex flex-col gap-3;
+}
+.muted {
+  @apply text-ink-soft;
+}
+.small {
+  @apply text-sm;
+}
+.gold-text {
+  @apply text-gold font-bold;
+}
