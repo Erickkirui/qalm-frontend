@@ -5,7 +5,10 @@ export default function Auth() {
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             qalm
           </h1>
           <p className="text-sm text-ink-muted mt-1">Find someone who gets it.</p>
@@ -15,13 +18,17 @@ export default function Auth() {
           <div className="card-head">
             <div>
               <h2 className="card-title">Welcome back</h2>
-              <p className="text-sm text-ink-muted">Log in to pick up where you left off.</p>
+              <p className="text-sm text-ink-muted">
+                Log in to pick up where you left off.
+              </p>
             </div>
           </div>
 
           <form className="auth-form">
             <div className="field">
-              <label className="label" htmlFor="email">Email or username</label>
+              <label className="label" htmlFor="email">
+                Email or username
+              </label>
               <input
                 className="input"
                 id="email"
@@ -31,7 +38,9 @@ export default function Auth() {
             </div>
 
             <div className="field">
-              <label className="label" htmlFor="password">Password</label>
+              <label className="label" htmlFor="password">
+                Password
+              </label>
               <input
                 className="input"
                 id="password"
@@ -45,7 +54,9 @@ export default function Auth() {
                 <input type="checkbox" className="checkbox" />
                 <span>Remember me</span>
               </label>
-              <Link to="#" className="link-btn">Forgot password?</Link>
+              <Link to="#" className="link-btn">
+                Forgot password?
+              </Link>
             </div>
 
             <button className="btn btn-primary btn-block btn-lg" type="submit">
@@ -71,9 +82,12 @@ export default function Auth() {
           </p>
 
           <div className="mt-4 rounded-2xl bg-brand-tint p-4">
-            <p className="text-sm font-bold text-brand-dark">Are you a therapist?</p>
+            <p className="text-sm font-bold text-brand-dark">
+              Are you a therapist?
+            </p>
             <p className="text-xs text-ink-soft mt-1">
-              Log in with the same account, then set up your professional profile.
+              Log in with the same account, then set up your professional
+              profile.
             </p>
             <button className="mt-3 btn btn-soft btn-block" type="button">
               Log in as a therapist
@@ -82,8 +96,14 @@ export default function Auth() {
 
           <p className="mt-6 text-center text-xs text-ink-muted">
             By logging in you agree to our{" "}
-            <Link to="/terms" className="link-btn">Terms</Link> and{" "}
-            <Link to="/privacy" className="link-btn">Privacy Policy</Link>.
+            <Link to="/terms" className="link-btn">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="link-btn">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </div>
       </div>
