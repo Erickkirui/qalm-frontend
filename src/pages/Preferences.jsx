@@ -1,216 +1,325 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { api, fake, apiFetch } from "../api";
+import { useNavigate } from "react-router-dom";
+import { getApiPrefix } from "../config/api";
 
-const AREAS = [
-  "Anxiety",
-  "Stress",
-  "Relationships",
-  "Depression",
-  "Grief",
-  "School pressure",
-  "Identity",
-  "Trauma",
+const HELP_AREAS = [
+  "Anxiety", "Stress", "Relationships", "Depression", 
+  "Grief", "School pressure", "Identity", "Trauma"
 ];
-const LOCATIONS = ["Nairobi", "Kasarani", "Online"];
-const SESSION_TYPES = ["Online", "In person"];
 const LANGUAGES = ["English", "Swahili", "French"];
+const SESSION_TYPES = [
+  { label: "Online", value: "online" },
+  { label: "In person", value: "in_person" }
+];
+const LOCATION_TYPES = [
+  { label: "Online", value: "online" },
+  { label: "In person", value: "in_person" },
+  { label: "Both", value: "both" },
+  { label: "Any", value: "any" }
+];
 
 export default function Preferences() {
-  const { user } = useAuth();
-  const [preferences, setPreferences] = useState({
-    areas: [],
-    locations: [],
-    sessionTypes: [],
-    languages: [],
-    maxFee: 2500,
-  });
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [hasExistingPrefs, setHasExistingPrefs] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // Form State (aligned with backend model)
+  const [form, setForm] = useState({
+    help_areas: [],
+    session_types: ["online"],
+    preferred_languages: [],
+    location_type: "any",
+    town: "",
+    county: "",
+    max_consultation_fee: 2500,
+    min_experience_years: 0,
+    currency: "KES",
+    is_active: true
+  });
+
+  const apiBase = getApiPrefix();
+  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
+    const fetchPrefs = async () => {
       try {
-        const { preferences: p } = await api.preferences();
-        setPreferences(p || {
-          areas: ["stress", "relationships"],
-          locations: ["Nairobi", "Kasarani"],
-          sessionTypes: ["Online", "In person"],
-          languages: ["English", "Swahili"],
-          maxFee: 2500,
+        const res = await fetch(`${apiBase}/therapist-match-preferences`, {
+          headers: { Authorization: `Bearer ${token}` }
         });
-      } catch {
-        setPreferences({
-          areas: ["stress", "relationships"],
-          locations: ["Nairobi", "Kasarani"],
-          sessionTypes: ["Online", "In person"],
-          languages: ["English", "Swahili"],
-          maxFee: 2500,
-        });
+        
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) {
+            setHasExistingPrefs(true);
+            setForm({
+              help_areas: json.data.help_areas || [],
+              session_types: json.data.session_types || ["online"],
+              preferred_languages: json.data.preferred_languages || [],
+              location_type: json.data.location_type || "any",
+              town: json.data.town || "",
+              county: json.data.county || "",
+              max_consultation_fee: json.data.max_consultation_fee || 2500,
+              min_experience_years: json.data.min_experience_years || 0,
+              currency: json.data.currency || "KES",
+              is_active: json.data.is_active !== undefined ? json.data.is_active : true
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch preferences", err);
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
-    })();
-    return () => {
-      cancelled = true;
     };
-  }, []);
+    fetchPrefs();
+  }, [apiBase, token]);
 
-  const update = (key, value) => setPreferences((p) => ({ ...p, [key]: value }));
+  const toggleArray = (field, value) => {
+    setForm(prev => {
+      const current = prev[field] || [];
+      const exists = current.includes(value);
+      return {
+        ...prev,
+        [field]: exists ? current.filter(v => v !== value) : [...current, value]
+      };
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    if (form.help_areas.length === 0) {
+      setErrorMsg("Please select at least one help area.");
+      setSaving(false);
+      return;
+    }
+
     try {
-      await api.savePreferences(preferences);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      const method = hasExistingPrefs ? "PATCH" : "POST";
+      const res = await fetch(`${apiBase}/therapist-match-preferences`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to save preferences");
+      }
+
+      setHasExistingPrefs(true);
+      setSuccessMsg("Preferences saved successfully!");
+      setTimeout(() => setSuccessMsg(""), 3000);
+      
     } catch (err) {
-      setError(err.message);
+      setErrorMsg(err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
+  // Shared style for selectable chips
+  const chipStyle = (isSelected) => 
+    `px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border active:scale-95 ${
+      isSelected 
+        ? "bg-[#5b3df5] text-white border-[#5b3df5] shadow-sm" 
+        : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+    }`;
+
   if (loading) {
     return (
-      <div className="container py-16">
-        <div className="h-8 w-1/3 skeleton rounded-full mb-4"></div>
-        <div className="skeleton h-40 rounded-2xl"></div>
+      <div className="flex justify-center py-20">
+        <div className="w-10 h-10 border-4 border-[#e6e1f5] border-t-[#5b3df5] rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-cloud">
-      <div className="container py-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+    <>
+      <style>
+        {`
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        `}
+      </style>
+
+      <div className="animate-fade-in-up max-w-4xl mx-auto">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <p className="small text-ink-muted">Match the right therapist for you.</p>
-            <h1 className="text-3xl font-extrabold leading-tight text-slate">My preferences</h1>
+            <p className="text-sm font-medium text-gray-500">Help us match you with the right support.</p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mt-1">My preferences</h1>
           </div>
-          {saved && <span className="badge badge-success">Saved</span>}
-        </div>
+        </header>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="card rounded-2xl border p-5">
-            <h2 className="card-title">Help areas</h2>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {AREAS.map((a) => (
-                <label key={a} className="choice-card flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={preferences.areas.includes(a.toLowerCase())}
-                    onChange={() => {
-                      const next = preferences.areas.includes(a.toLowerCase())
-                        ? preferences.areas.filter((x) => x !== a.toLowerCase())
-                        : [...preferences.areas, a.toLowerCase()];
-                      update("areas", next);
-                    }}
-                  />
-                  <span>{a}</span>
-                </label>
-              ))}
+        {/* Success/Error Alerts */}
+        {errorMsg && (
+          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2 animate-fade-in-up">
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            {errorMsg}
+          </div>
+        )}
+        {successMsg && (
+          <div className="mb-6 p-4 rounded-xl bg-[#d1f5e5] border border-[#a7f3d0] text-[#17603f] text-sm flex items-center gap-2 animate-fade-in-up">
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+            {successMsg}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          
+          {/* Help Areas */}
+          <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Help areas</h2>
+            <p className="text-sm text-gray-500 mb-4">Select at least one area you'd like support with.</p>
+            <div className="flex flex-wrap gap-2">
+              {HELP_AREAS.map(area => {
+                const val = area.toLowerCase();
+                return (
+                  <button
+                    key={area}
+                    type="button"
+                    onClick={() => toggleArray("help_areas", val)}
+                    className={chipStyle(form.help_areas.includes(val))}
+                  >
+                    {area}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="card rounded-2xl border p-5">
-            <h2 className="card-title">Location & session type</h2>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="field">
-                <label className="label">Location</label>
-                <div className="flex flex-wrap gap-2">
-                  {LOCATIONS.map((l) => (
-                    <label key={l} className="choice-card flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={preferences.locations.includes(l)}
-                        onChange={() => {
-                          const next = preferences.locations.includes(l)
-                            ? preferences.locations.filter((x) => x !== l)
-                            : [...preferences.locations, l];
-                          update("locations", next);
-                        }}
-                      />
-                      <span>{l}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="field">
-                <label className="label">Session type</label>
-                <div className="flex flex-wrap gap-2">
-                  {SESSION_TYPES.map((s) => (
-                    <label key={s} className="choice-card flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={preferences.sessionTypes.includes(s)}
-                        onChange={() => {
-                          const next = preferences.sessionTypes.includes(s)
-                            ? preferences.sessionTypes.filter((x) => x !== s)
-                            : [...preferences.sessionTypes, s];
-                          update("sessionTypes", next);
-                        }}
-                      />
-                      <span>{s}</span>
-                    </label>
-                  ))}
-                </div>
+          {/* Session Type & Location Type */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Session type</h2>
+              <div className="flex flex-wrap gap-2">
+                {SESSION_TYPES.map(({ label, value }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => toggleArray("session_types", value)}
+                    className={chipStyle(form.session_types.includes(value))}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
 
-          <div className="card rounded-2xl border p-5">
-            <h2 className="card-title">Language & budget</h2>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="field">
-                <label className="label">Languages</label>
-                <div className="flex flex-wrap gap-2">
-                  {LANGUAGES.map((l) => (
-                    <label key={l} className="choice-card flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={preferences.languages.includes(l)}
-                        onChange={() => {
-                          const next = preferences.languages.includes(l)
-                            ? preferences.languages.filter((x) => x !== l)
-                            : [...preferences.languages, l];
-                          update("languages", next);
-                        }}
-                      />
-                      <span>{l}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="field">
-                <label className="label" htmlFor="max-fee">Maximum fee (KES) per session</label>
+            <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Location preference</h2>
+              <select
+                value={form.location_type}
+                onChange={(e) => setForm({ ...form, location_type: e.target.value })}
+                className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm font-semibold rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#5b3df5] cursor-pointer mb-3"
+              >
+                {LOCATION_TYPES.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              
+              {/* Conditional Town/County inputs */}
+              <div className={`grid grid-cols-2 gap-2 overflow-hidden transition-all duration-300 ${['in_person', 'both'].includes(form.location_type) ? 'max-h-24 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
                 <input
-                  className="field-input"
-                  id="max-fee"
-                  type="number"
-                  min="0"
-                  max="10000"
-                  value={preferences.maxFee}
-                  onChange={(e) => update("maxFee", Number(e.target.value))}
+                  type="text"
+                  placeholder="Town"
+                  value={form.town}
+                  onChange={(e) => setForm({ ...form, town: e.target.value })}
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#5b3df5]"
+                />
+                <input
+                  type="text"
+                  placeholder="County"
+                  value={form.county}
+                  onChange={(e) => setForm({ ...form, county: e.target.value })}
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#5b3df5]"
                 />
               </div>
             </div>
           </div>
 
-          {error && <div className="alert alert-error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>{error}</span></div>}
+          {/* Languages & Budget */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Languages</h2>
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGES.map(lang => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => toggleArray("preferred_languages", lang)}
+                    className={chipStyle(form.preferred_languages.includes(lang))}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link to="/dashboard">
-              <button type="button" className="btn btn-secondary">Cancel</button>
-            </Link>
-            <button type="submit" className="btn btn-primary">Save preferences</button>
+            <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Budget & experience</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Max fee (KES)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.max_consultation_fee}
+                    onChange={(e) => setForm({ ...form, max_consultation_fee: Number(e.target.value) })}
+                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm font-bold rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#5b3df5]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Min. years exp.</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.min_experience_years}
+                    onChange={(e) => setForm({ ...form, min_experience_years: Number(e.target.value) })}
+                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm font-bold rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#5b3df5]"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4">
+            <button 
+              type="button" 
+              onClick={() => navigate("/dashboard")}
+              className="w-full sm:w-auto px-6 py-3 bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition-all active:scale-95"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              disabled={saving}
+              className="w-full sm:w-auto px-8 py-3 bg-[#5b3df5] text-white text-sm font-bold rounded-xl hover:bg-[#4a2ee0] transition-all hover:shadow-lg active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {saving ? (
+                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Saving...</>
+              ) : (
+                "Save preferences"
+              )}
+            </button>
+          </div>
+
         </form>
       </div>
-    </div>
+    </>
   );
 }

@@ -2,237 +2,123 @@ import { Link } from "react-router-dom";
 
 export default function Landing() {
   return (
-    <div className="bg-surface text-ink">
-      {/* ---------- Top fold ---------- */}
-      <section className="relative overflow-hidden bg-white">
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-brand/8 blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -bottom-32 -left-24 h-[520px] w-[520px] rounded-full bg-gold/10 blur-3xl" aria-hidden="true" />
-
-        <div className="relative container py-16 md:py-24">
-          <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-            {/* Left: copy */}
-            <div className="max-w-xl">
-              <span className="badge badge-gold">Calm Mind, Happy Life</span>
-              <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-                Talk to someone{" "}
-                <span className="text-brand">who gets it.</span>
-              </h1>
-              <p className="mt-4 text-lg text-ink-soft">
-                Find a verified therapist, book a session in a few taps and keep
-                a private journal. Built for young people, in plain language,
-                on any screen.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link to="/auth">
-                  <button className="btn btn-primary large">Get started free</button>
-                </Link>
-                <Link to="/therapists">
-                  <button className="btn btn-secondary large">Browse therapists</button>
-                </Link>
-              </div>
-              <p className="mt-3 text-sm text-ink-muted">
-                No pressure, no jargon. Your journal stays private to you.
-              </p>
+    <div className="bg-[#f8f9fc] font-sans text-gray-900">
+      
+      {/* ================= SECTION 1: HEADER & OPENING ================= */}
+      <div>
+        <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-50">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#5B3DF5] p-2 rounded-full flex items-center justify-center">
+               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  <path d="M15 15L20 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                </svg>
             </div>
-
-            {/* Right: hero panel */}
-            <div className="mt-10 md:mt-0">
-              <div className="card rounded-[22px] border p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="small text-ink-muted">Good afternoon, Imani</p>
-                    <h2 className="text-lg font-bold text-slate">How are you feeling today?</h2>
-                  </div>
-                  <span className="badge badge-gold">Streak · 5 days</span>
-                </div>
-                <div className="mt-4 mood-scale" data-toggle-group>
-                  {["😞", "🙁", "😐", "🙂", "😊"].map((emoji, i) => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      aria-pressed={i === 2}
-                      aria-label={["Very low", "Low", "Okay", "Good", "Great"][i]}
-                      className="mood"
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-4 text-sm">
-                  <span className="small text-ink-soft">Weekly check-in</span>
-                  <span className="font-bold text-brand">4 / 5</span>
-                </div>
-                <div className="mt-2 h-2 rounded-full bg-line overflow-hidden">
-                  <div className="h-full rounded-full bg-brand" style={{ width: "80%" }} />
-                </div>
-              </div>
-            </div>
+            <span className="text-xl font-extrabold tracking-tight">Qalm Tek</span>
           </div>
-        </div>
-      </section>
-
-      {/* ---------- Trust strip ---------- */}
-      <section className="container py-8">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            { value: "24+", label: "Verified therapists" },
-            { value: "24/7", label: "Journal access" },
-            { value: "4.8★", label: "Average session rating" },
-            { value: "Private", label: "Your entries stay yours" },
-          ].map((s) => (
-            <div key={s.label} className="card rounded-2xl border p-4 text-center">
-              <div className="text-2xl font-extrabold text-brand">{s.value}</div>
-              <p className="mt-1 text-sm text-ink-soft">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- How it works ---------- */}
-      <section className="bg-cloud">
-        <div className="container py-16 md:py-20">
-          <div className="max-w-2xl">
-            <span className="badge badge-gold">How it works</span>
-            <h2 className="mt-3 text-3xl font-extrabold leading-tight md:text-4xl">
-              Three simple steps to your first session
-            </h2>
-            <p className="mt-2 text-ink-soft">No long forms, no confusing menus. Everything is a tap away.</p>
+          <div className="flex gap-3">
+            <Link to="/auth" className="text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-full transition-all active:scale-95">
+              Log in
+            </Link>
+            <Link to="/auth" className="text-sm font-bold text-white bg-[#5B3DF5] hover:bg-[#4a2ee0] px-6 py-2.5 rounded-full transition-all shadow-sm active:scale-95">
+              Get started
+            </Link>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {[
-              { icon: "M11 11l3.5-3.5M20 20l-3.5-3.5", title: "1. Find your match", body: "Filter by focus area, language, price and availability to see therapists who fit your life." },
-              { icon: "M8 2v4M16 2v4M3 10h18", title: "2. Book a time", body: "Pick an open slot, choose video or in-person, and get a calm reminder before you join." },
-              { icon: "M8 8h8M8 12h6", title: "3. Keep writing", body: "Jot down thoughts between sessions in a distraction-free journal only you can open." },
-            ].map((s) => (
-              <div key={s.title} className="card rounded-2xl border p-5">
-                <span className="icon-tile gold" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">{s.icon}</svg>
-                </span>
-                <h3 className="mt-3 card-title">{s.title}</h3>
-                <p className="mt-1 text-sm text-ink-soft">{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </header>
 
-      {/* ---------- Features ---------- */}
-      <section className="container py-16 md:py-20">
-        <div className="grid gap-5 md:grid-cols-2">
-          {[
-            { icon: "M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z", title: "Therapist discovery", body: "Verified credentials, focus areas, honest bios and clear availability — compare without the guesswork." },
-            { icon: "M12 7v5l3 2", title: "Simple appointments", body: "See upcoming sessions, reschedule in a tap and keep your history organised by status." },
-            { icon: "M8 8h8M8 12h6", title: "Private journal", body: "Gentle prompts, comfortable text and automatic local drafts. Nothing you write is shown in notifications." },
-            { icon: "M4 19V9M10 19V5M16 19v-7M22 19H2", title: "Wellness summaries", body: "Mood check-ins and weekly reflections, shown as simple summaries you can actually understand." },
-          ].map((f) => (
-            <div key={f.title} className="card rounded-2xl border p-5">
-              <div className="icon-tile" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">{f.icon}</svg>
-              </div>
-              <h3 className="mt-3 card-title">{f.title}</h3>
-              <p className="mt-1 text-sm text-ink-soft">{f.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- Pricing ---------- */}
-      <section className="bg-cloud">
-        <div className="container py-16 md:py-20">
-          <div className="max-w-2xl">
-            <span className="badge badge-gold">Pricing</span>
-            <h2 className="mt-3 text-3xl font-extrabold leading-tight md:text-4xl">
-              Start free, upgrade only if it helps
-            </h2>
-            <p className="mt-2 text-ink-soft">Clear prices, no hidden fees, cancel whenever you like.</p>
-          </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {[
-              { name: "Free", price: "£0", body: "Journal, mood check-ins and resources.", features: ["Private journal", "Weekly mood summary", "Guided wellness library"], cta: "Create account", accent: false },
-              { name: "Sessions", price: "£35", body: "One-to-one video sessions with a verified therapist.", features: ["Everything in Free", "Book, reschedule or cancel", "Session notes and reminders"], cta: "Find a therapist", accent: true },
-              { name: "Care plan", price: "£89", body: "Four sessions a month plus priority booking.", features: ["Everything in Sessions", "4 sessions each month", "Priority slot access"], cta: "Choose plan", accent: false },
-            ].map((p) => (
-              <div key={p.name} className={`card rounded-2xl border p-5 ${p.accent ? "border-brand" : "hover:border-theme-strong"}`}>
-                {p.accent && <span className="badge badge-gold">Most popular</span>}
-                <p className="label">{p.name}</p>
-                <p className="text-3xl font-extrabold text-slate">{p.price}</p>
-                <p className="mt-2 text-sm text-ink-soft">{p.body}</p>
-                <ul className="mt-4 stack small text-sm text-ink-soft">
-                  {p.features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <Link to="/auth">
-                  <button className={`btn mt-6 w-full ${p.accent ? "btn-primary" : "btn-secondary"}`}>{p.cta}</button>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- CTA ---------- */}
-      <section className="container py-16 md:py-20">
-        <div className="card rounded-2xl bg-gradient-to-br from-brand to-brand-tint p-8 text-white">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-xl">
-              <h2 className="text-2xl font-extrabold">Ready when you are.</h2>
-              <p className="mt-1 text-ink-soft">Create an account in under a minute, or sign in to pick up where you left off.</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/auth">
-                <button className="btn btn-gold large">Get started</button>
-              </Link>
-              <Link to="/auth">
-                <button className="btn btn-secondary large">Sign in</button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- Footer ---------- */}
-      <footer className="border-t border-line bg-white">
-        <div className="container py-8">
-          <div className="grid gap-6 md:grid-cols-4">
-            <div>
-              <Link to="/" className="flex items-center gap-2 text-xl font-extrabold text-slate">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold text-white">Q</span>
-                Qalm<span className="text-gold">Tek</span>
-              </Link>
-              <p className="mt-2 text-sm text-ink-muted">Calm Mind, Happy Life. A digital wellness space for young people.</p>
-            </div>
-            <div>
-              <p className="font-bold text-slate">Product</p>
-              <ul className="mt-2 stack small text-ink-soft">
-                <li><Link to="/therapists">Find a therapist</Link></li>
-                <li><Link to="/appointments">Appointments</Link></li>
-                <li><Link to="/journal">Journal</Link></li>
-                <li><Link to="/dashboard">Dashboard</Link></li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-bold text-slate">Design</p>
-              <ul className="mt-2 stack small text-ink-soft">
-                <li><Link to="/ui-kit">UI kit &amp; tokens</Link></li>
-                <li><Link to="/auth">Sign in</Link></li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-bold text-slate">Support</p>
-              <ul className="mt-2 stack small text-ink-soft">
-                <li><a href="#">Help centre</a></li>
-                <li><a href="#">Privacy</a></li>
-                <li><a href="#">Terms</a></li>
-              </ul>
-            </div>
-          </div>
-          <p className="mt-6 text-xs text-ink-muted">
-            © 2026 Qalm Tek Mynd Limited. This template is demo content — Qalm Tek does not provide emergency services. If you are in crisis, contact your local emergency number.
+        <section className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center relative z-10">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1] mb-6">
+            Talk to someone <br/>
+            <span className="text-[#5B3DF5]">who gets it.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-8">
+            Find a verified therapist, book a session in a few taps, and keep a private journal. Built for young people, in plain language, on any screen.
           </p>
+          <Link to="/auth" className="inline-block bg-[#5B3DF5] text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-[#4a2ee0] transition-all hover:shadow-lg active:scale-95">
+            Find your match today
+          </Link>
+        </section>
+      </div>
+
+      {/* ================= SECTION 2: THE UNTANGLE BREAKER (With Animated Auth Shapes) ================= */}
+      <section className="relative bg-[#5b3df5] flex flex-col items-center justify-center overflow-hidden py-16 min-h-[60vh]">
+        
+        {/* Animated Background Shapes from Auth Page */}
+        <style>
+          {`
+            @keyframes float-slow {
+              0%, 100% { transform: translate(0, 0) scale(1); }
+              50% { transform: translate(-30px, 40px) scale(1.05); }
+            }
+            @keyframes float-medium {
+              0%, 100% { transform: translate(0, 0) rotate(12deg); }
+              50% { transform: translate(40px, -40px) rotate(25deg); }
+            }
+            @keyframes float-fast {
+              0%, 100% { transform: translate(0, 0) scale(1); }
+              50% { transform: translate(-20px, -30px) scale(0.95); }
+            }
+            .animate-float-slow { animation: float-slow 15s ease-in-out infinite; }
+            .animate-float-medium { animation: float-medium 12s ease-in-out infinite; }
+            .animate-float-fast { animation: float-fast 18s ease-in-out infinite; }
+          `}
+        </style>
+
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="animate-float-slow absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#3ddba7] opacity-90 blur-sm" />
+          <div className="animate-float-fast absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-[#ff5fa2] opacity-90 blur-sm" />
+          <div className="animate-float-medium absolute top-1/4 left-10 h-24 w-24 rounded-3xl bg-[#ffa23a] opacity-90 blur-sm" />
         </div>
-      </footer>
+
+        {/* Top Text */}
+        <div className="relative z-20 text-center px-6 shrink-0 mb-6">
+          <h2 className="text-white text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] drop-shadow-lg">
+            Let's untangle<br />your life.
+          </h2>
+        </div>
+
+        {/* The SVG Tangle Line */}
+        <div className="relative w-full h-64 md:h-96 pointer-events-none z-10">
+          <svg 
+            className="w-full h-full text-white/60" 
+            viewBox="0 0 1000 400" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+          >
+            {/* Horizontal line stretching edge to edge */}
+            <path 
+              d="
+                M 0 200 
+                L 300 200 
+                C 320 200, 330 160, 350 160 
+                C 380 160, 390 280, 410 280 
+                C 430 280, 440 120, 460 120 
+                C 490 120, 480 300, 500 300 
+                C 520 300, 510 100, 540 100 
+                C 570 100, 560 280, 580 280 
+                C 600 280, 590 140, 620 140 
+                C 650 140, 640 260, 660 260 
+                C 680 260, 690 200, 720 200 
+                L 1000 200
+              " 
+              stroke="currentColor" 
+              strokeWidth="4" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+            
+            {/* Tangle loops */}
+            <path d="M 450 120 C 380 60, 320 250, 400 300 C 470 340, 520 150, 450 120" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            <path d="M 550 100 C 620 50, 680 230, 610 290 C 550 330, 470 200, 550 100" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            <path d="M 410 280 C 350 340, 460 400, 500 300" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            <path d="M 580 280 C 660 350, 540 390, 500 300" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+          </svg>
+        </div>
+
+      </section>
+
     </div>
   );
 }

@@ -11,6 +11,29 @@
 
 @import "tailwindcss";
 
+
+@theme {
+  /* Headings */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Body Text / Buttons */
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+body  {
+  font-family: var(--font-sans);
+}
+
+p, a, span, li, input, textarea, button {
+  font-family: var(--font-sans);
+}
+
+
+/* Force headings to use Bricolage */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
+
 @theme static {
   /* ---------- 1. Core colours ---------- */
   --color-royal:   #123ead;   /* primary buttons, links, key icons */
