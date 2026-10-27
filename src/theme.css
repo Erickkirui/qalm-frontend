@@ -9,6 +9,8 @@
       --color-brand  ->  bg-brand  text-brand  border-brand  ring-brand/20
    ========================================================================== */
 
+@import "tailwindcss";
+
 @theme static {
   /* ---------- 1. Core colours: change these first ---------- */
   --color-brand: #5b3df5;     /* primary actions, links, focus rings */
