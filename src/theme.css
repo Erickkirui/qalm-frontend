@@ -1,0 +1,311 @@
+/* ==========================================================================
+   QALM TEK colour scheme  ·  src/theme.css  ·  Tailwind CSS v4
+
+   HOW TO CHANGE THE LOOK
+   1. Edit the hex values in "1. Core colours". Tints and darker shades
+      below are calculated from them, so one change updates everything.
+   2. Want to fine-tune a shade? Replace its color-mix(...) line with a hex.
+   3. Every token becomes Tailwind classes automatically:
+      --color-brand  ->  bg-brand  text-brand  border-brand  ring-brand/20
+   ========================================================================== */
+
+@theme static {
+  /* ---------- 1. Core colours: change these first ---------- */
+  --color-brand: #5b3df5;     /* primary actions, links, focus rings */
+  --color-pink:  #ff5fa2;     /* feel-good moments, check-in */
+  --color-sun:   #ffa23a;     /* warm accent, pending states */
+  --color-mint:  #3ddba7;     /* calm accent, success moments */
+
+  /* ---------- 2. Text ---------- */
+  --color-ink:       #16132b; /* main text, dark surfaces (sidebar) */
+  --color-ink-soft:  #4b4766; /* secondary text */
+  --color-ink-muted: #6b6785; /* placeholders, hints */
+
+  /* ---------- 3. Surfaces and borders ---------- */
+  --color-surface:     #f5f3fb; /* page background */
+  --color-line:        #e6e1f5; /* card borders, dividers */
+  --color-line-strong: #d9d3ee; /* input borders */
+
+  /* ---------- 4. Status colours (kept fixed so meaning stays clear) ---------- */
+  --color-success:      #17603f;
+  --color-success-tint: #ddf3e8;
+  --color-danger:       #c4204f;
+  --color-danger-dark:  #8e1239;
+  --color-danger-tint:  #ffe3ea;
+
+  /* ---------- 5. Calculated shades: follow the core colours ---------- */
+  --color-brand-hover: color-mix(in oklab, var(--color-brand) 85%, black);
+  --color-brand-dark:  color-mix(in oklab, var(--color-brand) 55%, black);
+  --color-brand-tint:  color-mix(in oklab, var(--color-brand) 18%, white);
+  --color-brand-faint: color-mix(in oklab, var(--color-brand) 8%, white);
+
+  --color-pink-tint: color-mix(in oklab, var(--color-pink) 25%, white);
+  --color-pink-dark: color-mix(in oklab, var(--color-pink) 50%, black);
+
+  --color-sun-tint: color-mix(in oklab, var(--color-sun) 30%, white);
+  --color-sun-dark: color-mix(in oklab, var(--color-sun) 45%, black);
+
+  --color-mint-tint: color-mix(in oklab, var(--color-mint) 30%, white);
+
+  /* ---------- 6. Fonts ---------- */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------- 7. Extra sizes used by switches and segmented controls ---------- */
+  --spacing-6\.5: 1.625rem;
+  --spacing-9\.5: 2.375rem;
+  --spacing-11\.5: 2.875rem;
+}
+
+/* ==========================================================================
+   OPTIONAL: extra schemes you can switch at runtime.
+   Put data-theme="sunset" on <html> and these override the core colours.
+   Delete this block if you only need one scheme.
+   ========================================================================== */
+
+[data-theme="sunset"] {
+  --color-brand: #e8590c;
+  --color-pink:  #f06595;
+  --color-sun:   #fcc419;
+  --color-mint:  #20c997;
+}
+
+[data-theme="ocean"] {
+  --color-brand: #1c7ed6;
+  --color-pink:  #f783ac;
+  --color-sun:   #ffa94d;
+  --color-mint:  #38d9a9;
+}
+
+/* ==========================================================================
+   COMPONENT CLASSES — the UI kit backing every screen
+   (replaces the old qalm.css block, wired into the pages)
+   ========================================================================== */
+
+/* ---- Buttons ---- */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-5 py-2.5 text-sm font-bold
+        focus:outline-none focus:ring-4 focus:ring-brand/30 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-muted;
+}
+.btn-primary {
+  @apply bg-brand text-ink hover:bg-brand-hover text-sm font-bold;
+}
+.btn-secondary {
+  @apply border-line bg-white text-ink hover:bg-ink hover:text-white text-sm font-bold;
+}
+.btn-soft {
+  @apply bg-brand-tint text-brand-dark hover:bg-brand-tint/70 text-sm font-bold;
+}
+.btn-pink {
+  @apply bg-pink text-ink hover:bg-pink/85 text-sm font-bold;
+}
+.btn-danger {
+  @apply bg-danger text-white hover:bg-danger-dark text-sm font-bold;
+}
+.btn-sm {
+  @apply h-10 px-4 text-sm;
+}
+.btn-lg {
+  @apply h-14 px-8 text-base font-bold;
+}
+.btn-block {
+  @apply w-full;
+}
+
+/* ---- Links ---- */
+.link-btn {
+  @apply text-sm font-bold text-brand hover:underline;
+}
+
+/* ---- Cards ---- */
+.card {
+  @apply rounded-2xl border border-line bg-white p-8;
+}
+.card-title {
+  @apply text-lg font-bold text-ink;
+}
+.card-hover {
+  @apply hover:shadow-md hover:transition duration-200;
+}
+
+/* ---- Auth card (full width, max-w-md) ---- */
+.auth-card {
+  @apply w-full max-w-md;
+}
+.auth-form {
+  @apply flex flex-col gap-8;
+}
+
+/* ---- Form fields ---- */
+.field {
+  @apply flex flex-col gap-2;
+}
+.label {
+  @apply text-sm font-semibold text-ink;
+}
+.input,
+.select,
+.textarea {
+  @apply h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base text-ink placeholder:text-ink-muted
+         focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20
+         disabled:cursor-not-allowed disabled:border-line disabled:bg-surface disabled:text-ink-muted;
+}
+.textarea {
+  @apply min-h-28 resize-y leading-relaxed;
+}
+.select {
+  @apply appearance-none pr-11;
+}
+
+/* ---- Choice controls ---- */
+.checkbox {
+  @apply size-5 rounded-md border border-line-strong text-brand focus:ring-4 focus:ring-brand/20 focus:ring-offset-0;
+}
+.radio {
+  @apply size-5 rounded-md border border-line-strong text-brand focus:ring-4 focus:ring-brand/20 focus:ring-offset-0;
+}
+.switch {
+  @apply relative h-6.5 w-11.5 rounded-full bg-line-strong
+         aria-checked:bg-brand knob:absolute left-0.5 top-0.5 size-5 rounded-full bg-white
+         transition group-aria-checked:translate-x-5;
+}
+.segmented {
+  @apply inline-flex gap-0.5 rounded-xl bg-surface p-1;
+}
+.segmented-item {
+  @apply h-9.5 rounded-lg px-4 text-sm font-bold text-ink-soft
+         aria-pressed:bg-white aria-pressed:text-ink aria-pressed:shadow-sm;
+}
+.chip {
+  @apply h-9 rounded-full border border-line-strong bg-white px-3.5 text-sm font-semibold text-ink
+         aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white;
+}
+
+/* ---- Choice card ---- */
+.choice-card {
+  @apply flex items-center gap-3.5 rounded-2xl border-2 border-line-strong bg-white p-4
+         has-[:checked]:border-brand has-[:checked]:bg-brand-faint;
+}
+
+/* ---- Messages (alert families) ---- */
+.alert {
+  @apply flex items-start gap-3 rounded-2xl p-4 text-sm;
+}
+.alert-info {
+  @apply bg-brand-tint text-brand-dark;
+}
+.alert-success {
+  @apply bg-success-tint text-success;
+}
+.alert-warning {
+  @apply bg-sun-tint text-sun-dark;
+}
+.alert-error {
+  @apply bg-danger-tint text-danger-dark;
+}
+
+/* ---- Badges ---- */
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold text-ink;
+}
+.badge-gold {
+  @apply bg-sun-tint text-sun-dark;
+}
+.badge-success {
+  @apply bg-success-tint text-success;
+}
+.badge-danger {
+  @apply bg-danger-tint text-danger-dark;
+}
+.badge-info {
+  @apply bg-brand-tint text-brand-dark;
+}
+
+/* ---- Page chrome ---- */
+.page-head {
+  @apply mb-5;
+}
+.page-head h1 {
+  @apply mb-2;
+}
+.lead {
+  @apply text-lg text-ink-soft max-w-60ch;
+}
+
+/* ---- Form grid ---- */
+.form-grid {
+  @apply grid gap-4;
+}
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---- Tag row ---- */
+.tag-row {
+  @apply flex flex-wrap gap-2;
+}
+
+/* ---- Modal ---- */
+.modal-backdrop {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-ink/50 p-4;
+}
+.modal-backdrop.is-open {
+  @apply flex;
+}
+.modal {
+  @apply w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl;
+}
+.modal-actions {
+  @apply flex justify-end gap-3 mt-5;
+}
+
+/* ---- Empty state ---- */
+.empty {
+  @apply text-center py-10 text-ink-soft;
+}
+.empty .icon-tile {
+  @apply mb-4 w-14 h-14;
+}
+
+/* ---- Skip link ---- */
+.skip-link {
+  @apply fixed left-6 top-6 z-60 rounded-lg bg-brand px-5 py-3 text-white;
+}
+
+/* ---- Entry animation ---- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.rise-2 {
+  animation-delay: 60ms;
+}
+.rise-3 {
+  animation-delay: 120ms;
+}
+.rise-4 {
+  animation-delay: 180ms;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
